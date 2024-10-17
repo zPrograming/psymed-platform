@@ -12,12 +12,6 @@ import java.util.Optional;
  */
 public interface SessionQueryService {
     /**
-     * Handle the query to get all sessions in the system.
-     *
-     * @return a list of all sessions
-     */
-    List<Session> handle(GetAllSessionsQuery query);
-    /**
      * Handle the query to get all sessions for a specific patient.
      *
      * @param query the query object containing the patient ID
@@ -32,15 +26,6 @@ public interface SessionQueryService {
      * @return a list of sessions for the professional
      */
     List<Session> handle(GetAllSessionsByProfessionalIdQuery query);
-
-    /**
-     * Handle the query to get a session by its ID.
-     *
-     * @param query the query object containing the session ID
-     * @return an optional session, if found
-     */
-    Optional<Session> handle(GetSessionByIdQuery query);
-
     /**
      * Handle the query to get a specific session for a patient by session ID.
      *
