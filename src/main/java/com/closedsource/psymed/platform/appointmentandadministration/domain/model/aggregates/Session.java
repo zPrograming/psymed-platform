@@ -51,15 +51,18 @@ public class Session extends AbstractAggregateRoot<Session> {
     @LastModifiedDate
     @Column(nullable = false)
     private Date updatedAt;
+
     protected Session() {}
+
     /**
      * Creates a new session from a CreateSessionCommand.
      *
      * @param command The command object containing all the necessary details to create a session.
      */
     public Session(CreateSessionCommand command) {
-        this.patientId = new PatientId(Long.parseLong(command.patientId()));  // Convert String to Long
-        this.professionalId = new ProfessionalId(Long.parseLong(command.professionalId()));  // Convert String to Long
+        // You should now directly use the patientId and professionalId from the command, no need to wrap them again
+        this.patientId = command.patientId();
+        this.professionalId = command.professionalId();
         this.appointmentDate = command.appointmentDate();
         this.sessionTime = command.sessionTime();
         this.noteId = null;  // Note is not mandatory at session creation

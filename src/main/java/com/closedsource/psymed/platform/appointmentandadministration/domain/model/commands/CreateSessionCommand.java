@@ -1,20 +1,22 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands;
 
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.AppointmentDate;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
 
-/**
- * Command to create a new session between a patient and a professional.
- * Requires patient ID, professional ID, appointment date, and session time.
- */
-public record CreateSessionCommand(String patientId, String professionalId,
-                                   AppointmentDate appointmentDate, SessionTime sessionTime) {
+public record CreateSessionCommand(
+        PatientId patientId,
+        ProfessionalId professionalId,
+        AppointmentDate appointmentDate,
+        SessionTime sessionTime) {
+
     public CreateSessionCommand {
-        if (patientId == null || patientId.isBlank()) {
-            throw new IllegalArgumentException("patientId cannot be null or empty");
+        if (patientId == null) {
+            throw new IllegalArgumentException("patientId cannot be null");
         }
-        if (professionalId == null || professionalId.isBlank()) {
-            throw new IllegalArgumentException("professionalId cannot be null or empty");
+        if (professionalId == null) {
+            throw new IllegalArgumentException("professionalId cannot be null");
         }
         if (appointmentDate == null || !appointmentDate.isValidAppointment()) {
             throw new IllegalArgumentException("Invalid or null appointmentDate");
