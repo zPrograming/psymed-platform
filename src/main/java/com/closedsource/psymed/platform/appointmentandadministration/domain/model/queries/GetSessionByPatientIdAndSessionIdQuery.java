@@ -5,8 +5,8 @@ package com.closedsource.psymed.platform.appointmentandadministration.domain.mod
  * @param patientId The ID of the patient.
  * @param appointmentId The ID of the appointment.
  */
-public record GetAppointmentByPatientIdAndSessionIdQuery(Long patientId, Long appointmentId) {
-    public GetAppointmentByPatientIdAndSessionIdQuery {
+public record GetSessionByPatientIdAndSessionIdQuery(Long patientId, Long appointmentId) {
+    public GetSessionByPatientIdAndSessionIdQuery {
         if (patientId == null || patientId <= 0) {
             throw new IllegalArgumentException("patientId cannot be null or less than or equal to 0");
         }

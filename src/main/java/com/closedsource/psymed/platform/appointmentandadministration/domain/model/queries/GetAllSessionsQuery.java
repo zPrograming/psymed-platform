@@ -3,4 +3,4 @@ package com.closedsource.psymed.platform.appointmentandadministration.domain.mod
 /**
  * Query to get all appointments in the system.
  */
-public record GetAllAppointmentsQuery() {}
+public record GetAllSessionsQuery() {}
