@@ -22,17 +22,29 @@ public class SessionQueryServiceImpl implements SessionQueryService {
 
     @Override
     public List<Session> handle(GetAllSessionsByPatientIdQuery query) {
-        return sessionRepository.findAllByPatientId(new PatientId(query.patientId()));
+        Long patientIdAsLong = Long.parseLong(query.patientId()); // Convert String to Long
+        return sessionRepository.findAllByPatientId(new PatientId(patientIdAsLong));
     }
 
     @Override
     public List<Session> handle(GetAllSessionsByProfessionalIdQuery query) {
-        return sessionRepository.findAllByProfessionalId(new ProfessionalId(query.professionalId()));
+        Long professionalIdAsLong = Long.parseLong(query.professionalId()); // Convert String to Long
+        return sessionRepository.findAllByProfessionalId(new ProfessionalId(professionalIdAsLong));
     }
 
     @Override
     public Optional<Session> handle(GetSessionByPatientIdAndSessionIdQuery query) {
-        return sessionRepository.findByPatientIdAndId(new PatientId(query.patientId()), query.id());
+        Long patientIdAsLong = Long.parseLong(query.patientId()); // Convert String to Long
+        return sessionRepository.findByPatientIdAndId(new PatientId(patientIdAsLong), query.id());
     }
 
+    @Override
+    public Optional<Session> handle(GetSessionByIdQuery query) {
+        return sessionRepository.findById(query.id());
+    }
+
+    @Override
+    public List<Session> handle() {
+        return sessionRepository.findAll();
+    }
 }
