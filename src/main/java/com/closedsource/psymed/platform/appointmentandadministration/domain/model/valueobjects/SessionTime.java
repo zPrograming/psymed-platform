@@ -1,12 +1,14 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 
 /**
  * Value Object representing the session duration in hours.
  * This object encapsulates the logic to manage the duration of sessions.
  */
 @Embeddable
+@Getter
 public class SessionTime {
     private double durationInHours;
 
@@ -31,30 +33,6 @@ public class SessionTime {
         }
         this.durationInHours = durationInHours;
     }
-
-    /**
-     * Updates the session time with a new duration.
-     *
-     * @param newDurationInHours The new session duration in hours.
-     *                           It must be positive and greater than 0.
-     * @throws IllegalArgumentException if the new duration is less than or equal to 0.
-     */
-    public void updateSessionTime(double newDurationInHours) {
-        if (newDurationInHours <= 0) {
-            throw new IllegalArgumentException("New session time must be positive and greater than 0");
-        }
-        this.durationInHours = newDurationInHours;
-    }
-
-    /**
-     * Returns the session duration in hours.
-     *
-     * @return The session duration in hours.
-     */
-    public double getDurationInHours() {
-        return durationInHours;
-    }
-
     /**
      * Checks if the session duration is valid based on business rules.
      * For example, the minimum valid duration could be 0.5 hours.

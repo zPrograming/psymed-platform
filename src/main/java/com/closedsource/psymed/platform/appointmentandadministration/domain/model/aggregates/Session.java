@@ -1,10 +1,7 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates;
 
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.NoteId;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.AppointmentDate;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,15 +34,15 @@ public class Session extends AbstractAggregateRoot<Session> {
 
     @Embedded
     @Getter
-    private NoteId noteId;
-
-    @Embedded
-    @Getter
     private AppointmentDate appointmentDate;
 
     @Embedded
     @Getter
     private SessionTime sessionTime;
+
+    @Embedded
+    @Getter
+    private NoteId noteId;
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
@@ -54,57 +51,17 @@ public class Session extends AbstractAggregateRoot<Session> {
     @LastModifiedDate
     @Column(nullable = false)
     private Date updatedAt;
-
-    protected Session() {
-    }
-
+    protected Session() {}
     /**
-     * Creates a new session.
+     * Creates a new session from a CreateSessionCommand.
      *
-     * @param patientId        The unique identifier of the patient.
-     * @param professionalId   The unique identifier of the professional.
-     * @param noteId           The unique identifier of the note associated with the session.
-     * @param appointmentDate  The date and time of the session.
-     * @param sessionTime      The duration of the session in hours.
+     * @param command The command object containing all the necessary details to create a session.
      */
-    public Session(PatientId patientId, ProfessionalId professionalId, NoteId noteId, AppointmentDate appointmentDate, SessionTime sessionTime) {
-        this.patientId = patientId;
-        this.professionalId = professionalId;
-        this.noteId = noteId;
-        this.appointmentDate = appointmentDate;
-        this.sessionTime = sessionTime;
-    }
-
-    /**
-     * Updates the appointment date for the session.
-     *
-     * @param newAppointmentDate The new date and time of the session.
-     */
-    public void updateAppointmentDate(AppointmentDate newAppointmentDate) {
-        if (newAppointmentDate != null && newAppointmentDate.isValidAppointment()) {
-            this.appointmentDate = newAppointmentDate;
-        }
-    }
-
-    /**
-     * Updates the session time (duration).
-     *
-     * @param newSessionTime The new duration of the session.
-     */
-    public void updateSessionTime(SessionTime newSessionTime) {
-        if (newSessionTime != null && newSessionTime.isValidDuration()) {
-            this.sessionTime = newSessionTime;
-        }
-    }
-
-    /**
-     * Updates the note associated with the session.
-     *
-     * @param newNoteId The new note ID.
-     */
-    public void updateNoteId(NoteId newNoteId) {
-        if (newNoteId != null && newNoteId.isValid()) {
-            this.noteId = newNoteId;
-        }
+    public Session(CreateSessionCommand command) {
+        this.patientId = new PatientId(Long.parseLong(command.patientId()));  // Convert String to Long
+        this.professionalId = new ProfessionalId(Long.parseLong(command.professionalId()));  // Convert String to Long
+        this.appointmentDate = command.appointmentDate();
+        this.sessionTime = command.sessionTime();
+        this.noteId = null;  // Note is not mandatory at session creation
     }
 }

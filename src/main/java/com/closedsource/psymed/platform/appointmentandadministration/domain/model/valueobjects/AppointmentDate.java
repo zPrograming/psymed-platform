@@ -1,6 +1,8 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+
 import java.util.Date;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Date;
  * This object encapsulates the logic to manage and validate the appointment date.
  */
 @Embeddable
+@Getter
 public class AppointmentDate {
     private Date appointmentDate;
 
@@ -32,30 +35,6 @@ public class AppointmentDate {
         }
         this.appointmentDate = appointmentDate;
     }
-
-    /**
-     * Updates the appointment date with a new date and time.
-     *
-     * @param newAppointmentDate The new appointment date and time.
-     *                           It must be a future date.
-     * @throws IllegalArgumentException if the new date is in the past.
-     */
-    public void updateAppointmentDate(Date newAppointmentDate) {
-        if (newAppointmentDate.before(new Date())) {
-            throw new IllegalArgumentException("New appointment date must be in the future.");
-        }
-        this.appointmentDate = newAppointmentDate;
-    }
-
-    /**
-     * Returns the appointment date and time.
-     *
-     * @return The appointment date and time.
-     */
-    public Date getAppointmentDate() {
-        return appointmentDate;
-    }
-
     /**
      * Checks if the appointment date is valid.
      * The date must be in the future.

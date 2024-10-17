@@ -29,13 +29,4 @@ public record NoteId(Long noteId) {
     public NoteId() {
         this(0L);
     }
-
-    /**
-     * Checks if the Note ID is valid.
-     *
-     * @return true if the Note ID is greater than 0, false otherwise.
-     */
-    public boolean isValid() {
-        return noteId != null && noteId > 0;
-    }
 }
