@@ -1,12 +1,14 @@
 package com.closedsource.psymed.platform.patientreport.domain.model.entities;
 
 import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.MoodStatus;
+import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.PatientId;
+import com.closedsource.psymed.platform.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 
-public class MoodState {
+public class MoodState extends AuditableModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,47 +17,39 @@ public class MoodState {
     MoodStatus moodStatus;
 
     @NotNull
-    private Long patientId;
+    private PatientId patientId;
 
-    public MoodState(Long patientId) {
-        this.patientId = patientId;
+    public MoodState() {
+        this.patientId = null;
+        this.moodStatus = null;
+    }
+    public MoodState(Long patientId, Integer moodStatus) {
+        this.patientId = new PatientId(patientId);
+        validateMoodStatus(moodStatus);
+        switch(moodStatus) {
+            case 0:
+                this.moodStatus = MoodStatus.SOSAD;
+                break;
+            case 1:
+                this.moodStatus = MoodStatus.SAD;
+                break;
+            case 2:
+                this.moodStatus = MoodStatus.NORMAL;
+                break;
+            case 3:
+                this.moodStatus = MoodStatus.HAPPY;
+                break;
+            case 4:
+                this.moodStatus = MoodStatus.SOHAPPY;
+                break;
+            default: throw new IllegalArgumentException("Invalid mood status");
+        }
     }
 
-    public boolean hasAnState() {
-        return this.moodStatus != null;
+    private void validateMoodStatus(Integer moodStatus) {
+        if(moodStatus == null || moodStatus < 0 || moodStatus > 4)
+            throw new IllegalArgumentException("Invalid mood status");
     }
-
-    public void soSad() {
-        if(hasAnState())
-            throw new IllegalArgumentException("The patient already has a mood state");
-        this.moodStatus = MoodStatus.SOSAD;
-
-    }
-
-    public void sad() {
-        if(hasAnState())
-            throw new IllegalArgumentException("The patient already has a mood state");
-        this.moodStatus = MoodStatus.SAD;
-    }
-
-    public void normal() {
-        if(hasAnState())
-            throw new IllegalArgumentException("The patient already has a mood state");
-        this.moodStatus = MoodStatus.NORMAL;
-    }
-
-    public void happy() {
-        if(hasAnState())
-            throw new IllegalArgumentException("The patient already has a mood state");
-        this.moodStatus = MoodStatus.HAPPY;
-    }
-
-    public void soHappy() {
-        if(hasAnState())
-            throw new IllegalArgumentException("The patient already has a mood state");
-        this.moodStatus = MoodStatus.SOHAPPY;
-    }
-
 
 
 }
