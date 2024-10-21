@@ -1,5 +1,8 @@
 package com.closedsource.psymed.platform.patientreport.domain.model.valueobjects;
 
+import lombok.Getter;
+
+@Getter
 public record PatientId(Long patientId) {
     public PatientId {
         if(patientId < 0) {
