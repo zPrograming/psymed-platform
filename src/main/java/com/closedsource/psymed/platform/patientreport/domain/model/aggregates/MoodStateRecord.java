@@ -1,14 +1,16 @@
-package com.closedsource.psymed.platform.patientreport.domain.model.entities;
+package com.closedsource.psymed.platform.patientreport.domain.model.aggregates;
 
+import com.closedsource.psymed.platform.patientreport.domain.model.commands.CreateMoodStateRecordCommand;
 import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.MoodStatus;
 import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.PatientId;
 import com.closedsource.psymed.platform.shared.domain.model.entities.AuditableModel;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
-public class MoodState extends AuditableModel {
+@Entity
+@EntityListeners(AuditableModel.class)
+public class MoodStateRecord extends AuditableModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,14 +18,17 @@ public class MoodState extends AuditableModel {
     @NotNull
     MoodStatus moodStatus;
 
+    @Getter
     @NotNull
+    @Embedded
     private PatientId patientId;
 
-    public MoodState() {
+    public MoodStateRecord() {
         this.patientId = null;
         this.moodStatus = null;
     }
-    public MoodState(Long patientId, Integer moodStatus) {
+
+    public MoodStateRecord(Long patientId, Integer moodStatus) {
         this.patientId = new PatientId(patientId);
         validateMoodStatus(moodStatus);
         switch(moodStatus) {
@@ -49,6 +54,11 @@ public class MoodState extends AuditableModel {
     private void validateMoodStatus(Integer moodStatus) {
         if(moodStatus == null || moodStatus < 0 || moodStatus > 4)
             throw new IllegalArgumentException("Invalid mood status");
+    }
+
+    public void validateDay(MoodStateRecord lastMoodState) {
+        if (lastMoodState.getCreatedAt() == this.getCreatedAt())
+            throw new IllegalArgumentException("You can't record mood state twice in the same day");
     }
 
 
