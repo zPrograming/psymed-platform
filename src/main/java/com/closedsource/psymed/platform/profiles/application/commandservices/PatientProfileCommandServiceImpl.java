@@ -1,12 +1,12 @@
 package com.closedsource.psymed.platform.profiles.application.commandservices;
 
 import com.closedsource.psymed.platform.profiles.domain.model.aggregates.PatientProfile;
+import com.closedsource.psymed.platform.profiles.domain.model.commands.CheckPatientProfileByIdCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CreatePatientProfileCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.Email;
 import com.closedsource.psymed.platform.profiles.domain.services.PatientProfileCommandService;
 import com.closedsource.psymed.platform.profiles.infrastructure.persistence.jpa.repositories.PatientProfileRepository;
 import com.closedsource.psymed.platform.profiles.infrastructure.persistence.jpa.repositories.ProfessionalProfileRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,5 +33,10 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
         patientProfileRepository.save(patientProfile);
 
         return Optional.of(patientProfile);
+    }
+
+    @Override
+    public boolean handle(CheckPatientProfileByIdCommand command) {
+        return this.patientProfileRepository.existsById(command.id());
     }
 }

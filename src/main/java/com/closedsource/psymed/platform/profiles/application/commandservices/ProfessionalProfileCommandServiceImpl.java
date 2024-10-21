@@ -1,6 +1,7 @@
 package com.closedsource.psymed.platform.profiles.application.commandservices;
 
 import com.closedsource.psymed.platform.profiles.domain.model.aggregates.ProfessionalProfile;
+import com.closedsource.psymed.platform.profiles.domain.model.commands.CheckProfessionalProfileByIdCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CreateProfessionalProfileCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.Email;
 import com.closedsource.psymed.platform.profiles.domain.services.ProfessionalProfileCommandService;
@@ -31,5 +32,10 @@ public class ProfessionalProfileCommandServiceImpl implements ProfessionalProfil
         professionalProfileRepository.save(profile);
 
         return Optional.of(profile);
+    }
+
+    @Override
+    public boolean handle(CheckProfessionalProfileByIdCommand command) {
+        return this.professionalProfileRepository.existsById(command.id());
     }
 }
