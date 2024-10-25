@@ -36,5 +36,6 @@ public class Pill extends AuditableAbstractAggregateRoot<Pill> {
 
     public Pill() {
 
+
     }
 }
