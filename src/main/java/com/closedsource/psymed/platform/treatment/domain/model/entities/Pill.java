@@ -10,19 +10,31 @@ import lombok.Getter;
 
 @Getter
 @Entity
-public class Pills extends AuditableAbstractAggregateRoot<Pills> {
+public class Pill extends AuditableAbstractAggregateRoot<Pill> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
+    private String name;
+    @NotNull
+    private String description;
+    @NotNull
     private String frequency;
-
     @NotNull
     private Integer quantity;
 
 
+    public Pill(String name, String description, String frequency, Integer quantity){
+        this.name = name;
+        this.description = description;
+        this.frequency = frequency;
+        this.quantity = quantity;
 
+    }
 
+    public Pill() {
+
+    }
 }
