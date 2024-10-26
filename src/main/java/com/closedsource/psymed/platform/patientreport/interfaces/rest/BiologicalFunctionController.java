@@ -1,6 +1,8 @@
 package com.closedsource.psymed.platform.patientreport.interfaces.rest;
 
 import com.closedsource.psymed.platform.patientreport.domain.model.aggregates.BiologicalFunction;
+import com.closedsource.psymed.platform.patientreport.domain.model.queries.GetAllBiologicalFunctionsByPatientIdQuery;
+import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.PatientId;
 import com.closedsource.psymed.platform.patientreport.domain.services.BiologicalFunctionCommandService;
 import com.closedsource.psymed.platform.patientreport.domain.services.BiologicalFunctionQueryService;
 import com.closedsource.psymed.platform.patientreport.interfaces.rest.resources.BiologicalFunctionResource;
@@ -10,11 +12,9 @@ import com.closedsource.psymed.platform.patientreport.interfaces.rest.transform.
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -40,6 +40,16 @@ public class BiologicalFunctionController {
         return biologicalFunction.map(biological ->
                 new ResponseEntity<>(BiologicalFunctionResourceFromEntityAssembler
                         .toResourceFromEntity(biological), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+//IN THE FUTURE THIS HAS TO WORK WITH PATIENT ID AND PROFESSIONAL ID
+    @GetMapping("/{patientId}")
+    public ResponseEntity<List<BiologicalFunctionResource>> getAllBiologicalFunctionsByPatientId(@PathVariable Long patientId) {
+        var patientIdConstructed = new PatientId(patientId);
+        var getAllBiologicalFunctionsByPatientIdQuery = new GetAllBiologicalFunctionsByPatientIdQuery(patientIdConstructed);
+        var biologicalFunctions = biologicalFunctionQueryService.handle(getAllBiologicalFunctionsByPatientIdQuery);
+        var biologicalFunctionsResources = biologicalFunctions.stream()
+                .map(BiologicalFunctionResourceFromEntityAssembler::toResourceFromEntity).toList();
+        return ResponseEntity.ok(biologicalFunctionsResources);
     }
 
 }
