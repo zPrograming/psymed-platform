@@ -4,7 +4,9 @@ import com.closedsource.psymed.platform.profiles.domain.model.commands.CheckPati
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CheckProfessionalProfileByIdCommand;
 import com.closedsource.psymed.platform.profiles.domain.services.PatientProfileCommandService;
 import com.closedsource.psymed.platform.profiles.domain.services.ProfessionalProfileCommandService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProfilesContextFacade {
     //#region DI
     private final PatientProfileCommandService patientProfileCommandService;
