@@ -1,20 +1,21 @@
 package com.closedsource.psymed.platform.patientreport.domain.model.aggregates;
 
-import com.closedsource.psymed.platform.patientreport.domain.model.commands.CreateMoodStateRecordCommand;
 import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.MoodStatus;
 import com.closedsource.psymed.platform.patientreport.domain.model.valueobjects.PatientId;
+import com.closedsource.psymed.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.closedsource.psymed.platform.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Objects;
+
 @Entity
 @EntityListeners(AuditableModel.class)
-public class MoodStateRecord extends AuditableModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class MoodState extends AuditableAbstractAggregateRoot<MoodState> {
     @NotNull
     MoodStatus moodStatus;
 
@@ -23,12 +24,12 @@ public class MoodStateRecord extends AuditableModel {
     @Embedded
     private PatientId patientId;
 
-    public MoodStateRecord() {
+    public MoodState() {
         this.patientId = null;
         this.moodStatus = null;
     }
 
-    public MoodStateRecord(Long patientId, Integer moodStatus) {
+    public MoodState(Long patientId, Integer moodStatus) {
         this.patientId = new PatientId(patientId);
         validateMoodStatus(moodStatus);
         switch(moodStatus) {
@@ -56,9 +57,21 @@ public class MoodStateRecord extends AuditableModel {
             throw new IllegalArgumentException("Invalid mood status");
     }
 
-    public void validateDay(MoodStateRecord lastMoodState) {
-        if (lastMoodState.getCreatedAt() == this.getCreatedAt())
+    public void validateDay(MoodState lastMoodState) {
+        Date actualDate = new Date();
+
+        LocalDate currentDay = actualDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate lastMoodStateDate = lastMoodState.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (Objects.equals(currentDay, lastMoodStateDate))
             throw new IllegalArgumentException("You can't record mood state twice in the same day");
+    }
+
+    public Integer getStatus() {
+        return this.moodStatus.ordinal();
+    }
+
+    public Long getLongPatientId() {
+        return this.patientId.patientId();
     }
 
 
