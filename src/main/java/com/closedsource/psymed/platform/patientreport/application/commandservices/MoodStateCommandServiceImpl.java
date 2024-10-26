@@ -1,10 +1,10 @@
     package com.closedsource.psymed.platform.patientreport.application.commandservices;
 
     import com.closedsource.psymed.platform.patientreport.application.outboundservices.acl.ExternalProfileService;
+    import com.closedsource.psymed.platform.patientreport.domain.exceptions.PatientNotFoundException;
     import com.closedsource.psymed.platform.patientreport.domain.model.aggregates.MoodState;
     import com.closedsource.psymed.platform.patientreport.domain.model.commands.CreateMoodStateRecordCommand;
-    import com.closedsource.psymed.platform.patientreport.domain.services.MoodStateQueryService;
-    import com.closedsource.psymed.platform.patientreport.infrastructure.persistence.jpa.repositories.MoodStateRecordRepository;
+    import com.closedsource.psymed.platform.patientreport.infrastructure.persistence.jpa.repositories.MoodStateRepository;
     import com.closedsource.psymed.platform.patientreport.domain.services.MoodStateCommandService;
     import org.springframework.stereotype.Service;
 
@@ -12,26 +12,35 @@
 
     @Service
     public class MoodStateCommandServiceImpl implements MoodStateCommandService {
-        private final MoodStateRecordRepository moodStateRecordRepository;
+        private final MoodStateRepository moodStateRecordRepository;
         private final ExternalProfileService externalProfileService;
-        public MoodStateCommandServiceImpl(MoodStateRecordRepository moodStateRepository, ExternalProfileService externalProfileService) {
+        public MoodStateCommandServiceImpl(MoodStateRepository moodStateRepository, ExternalProfileService externalProfileService) {
             this.moodStateRecordRepository = moodStateRepository;
             this.externalProfileService = externalProfileService;
         }
         @Override
         public Optional<MoodState> handle(CreateMoodStateRecordCommand command) {
-//            #TODO: Implement this method to fetch if the patient exists
-            var patientId = externalProfileService.existsPatientById(command.patientId());
-            if(patientId) {
+
+            var patientIdExists = externalProfileService.existsPatientById(command.patientId());
+            if(patientIdExists) {
                 var moodStateRecord = new MoodState(command.patientId(), command.moodStatus());
-                var lastMoodStateRecord = moodStateRecordRepository.findAllByPatientId(moodStateRecord.getPatientId()).stream().reduce((first, second) -> second).orElse(null);
-                if(lastMoodStateRecord != null) moodStateRecord.validateDay(lastMoodStateRecord);
-                var createdMoodStateRecord = moodStateRecordRepository.save(moodStateRecord);
-                return Optional.of(createdMoodStateRecord);
+                var lastMoodStateRecord = moodStateRecordRepository
+                        .findAllByPatientId(moodStateRecord.getPatientId())
+                        .stream().reduce((first, second) -> second).orElse(null);
+
+                if(lastMoodStateRecord != null) moodStateRecord.validateRecordAvailability(lastMoodStateRecord);
+
+                try {
+                    var createdMoodStateRecord = moodStateRecordRepository.save(moodStateRecord);
+                    return Optional.of(createdMoodStateRecord);
+
+                }catch(Exception e) {
+                    throw new IllegalArgumentException("Error creating the mood state record: %s"
+                            .formatted(e.getMessage()));
+                }
             }
-            else {
-                throw new IllegalArgumentException("Patient does not exist");
-            }
+            throw new PatientNotFoundException(command.patientId());
+
 
 
 
