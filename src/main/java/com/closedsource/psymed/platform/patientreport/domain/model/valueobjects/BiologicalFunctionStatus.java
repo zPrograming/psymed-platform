@@ -1,5 +1,8 @@
 package com.closedsource.psymed.platform.patientreport.domain.model.valueobjects;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public record BiologicalFunctionStatus(Integer hunger, Integer hydration,
                                        Integer sleep, Integer energy) {
     public BiologicalFunctionStatus {
@@ -12,8 +15,5 @@ public record BiologicalFunctionStatus(Integer hunger, Integer hydration,
         if(energy < 0 || energy >5)
             throw new IllegalArgumentException("Energy must be between 0 and 5");
     }
-//    public BiologicalFunctionStatus() {
-//        this(0, 0, 0, 0);
-//    }
 
 }
