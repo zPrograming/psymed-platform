@@ -57,7 +57,7 @@ public class MoodState extends AuditableAbstractAggregateRoot<MoodState> {
             throw new IllegalArgumentException("Invalid mood status");
     }
 
-    public void validateDay(MoodState lastMoodState) {
+    public void validateRecordAvailability(MoodState lastMoodState) {
         Date actualDate = new Date();
 
         LocalDate currentDay = actualDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
