@@ -5,11 +5,12 @@ import com.closedsource.psymed.platform.iam.domain.model.commands.SignInCommand;
 import com.closedsource.psymed.platform.iam.domain.model.commands.SignUpCommand;
 import com.closedsource.psymed.platform.iam.domain.service.AccountCommandService;
 import com.closedsource.psymed.platform.iam.infrastructure.persistence.jpa.repositories.AccountRepository;
-import org.apache.catalina.User;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class AccountCommandServiceImpl implements AccountCommandService {
     private final AccountRepository accountRepository;
 
