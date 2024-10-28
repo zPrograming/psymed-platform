@@ -35,7 +35,7 @@ public class Account extends AuditableAbstractAggregateRoot<Account> {
 
     public Account(String userName, String password, Roles role) {
         if (role == Roles.ROLE_PROFESSIONAL || role == Roles.ROLE_PATIENT) {
-            throw new IllegalArgumentException("Invalida role");
+            throw new IllegalArgumentException("Invalid role");
         } else {
             this.userName = userName;
             this.password = password;
@@ -45,14 +45,18 @@ public class Account extends AuditableAbstractAggregateRoot<Account> {
     }
 
     public Account(SignUpCommand command) {
-        if(!Objects.equals(command.role(), Roles.ROLE_PROFESSIONAL.toString())
-                || !Objects.equals(command.role(), Roles.ROLE_PATIENT.toString())) {
-            throw new IllegalArgumentException("Invalid role");
+        System.out.println("role from command %s".formatted(command.role()));
+        System.out.println("role from enum %s".formatted(Roles.ROLE_PROFESSIONAL.toString()));
 
+        if(Objects.equals(command.role(), Roles.ROLE_PROFESSIONAL.toString())
+                || Objects.equals(command.role(), Roles.ROLE_PATIENT.toString())) {
+            this.userName = command.username();
+            this.password = command.password();
+            this.role = Roles.valueOf(command.role());
+        } else {
+            throw new IllegalArgumentException("Invalid role");
         }
-        this.userName = command.username();
-        this.password = command.password();
-        this.role = Roles.valueOf(command.role());
+
     }
 
     public String getRoleInString() {
