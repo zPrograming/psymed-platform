@@ -2,8 +2,6 @@ package com.closedsource.psymed.platform.appointmentandadministration.interfaces
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.*;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionQueryService;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.CreateSessionResource;
@@ -121,9 +119,8 @@ public class SessionController {
             @ApiResponse(responseCode = "404", description = "No sessions found for the patient")
     })
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<SessionResource>> getAllSessionsByPatientId(@PathVariable Long patientId) {
-        var patientIdConstructed = new PatientId(patientId);
-        var query = new GetAllSessionsByPatientIdQuery(patientIdConstructed);
+    public ResponseEntity<List<SessionResource>> getAllSessionsByPatientId(@PathVariable String patientId) {
+        var query = new GetAllSessionsByPatientIdQuery(patientId);
         var sessions = sessionQueryService.handle(query);
         if (sessions.isEmpty()) return ResponseEntity.notFound().build();
         var sessionResources = sessions.stream()
@@ -145,9 +142,8 @@ public class SessionController {
             @ApiResponse(responseCode = "404", description = "No sessions found for the professional")
     })
     @GetMapping("/professional/{professionalId}")
-    public ResponseEntity<List<SessionResource>> getAllSessionsByProfessionalId(@PathVariable Long professionalId) {
-        var professionalIdConstructed = new ProfessionalId(professionalId);
-        var query = new GetAllSessionsByProfessionalIdQuery(professionalIdConstructed);
+    public ResponseEntity<List<SessionResource>> getAllSessionsByProfessionalId(@PathVariable String professionalId) {
+        var query = new GetAllSessionsByProfessionalIdQuery(professionalId);
         var sessions = sessionQueryService.handle(query);
         if (sessions.isEmpty()) return ResponseEntity.notFound().build();
         var sessionResources = sessions.stream()
@@ -171,9 +167,8 @@ public class SessionController {
     })
     @GetMapping("/patient/{patientId}/session/{id}")
     public ResponseEntity<SessionResource> getSessionByPatientIdAndId(
-            @PathVariable Long patientId, @PathVariable Long id) {
-        var patientIdConstructed = new PatientId(patientId);
-        var query = new GetSessionByPatientIdAndSessionIdQuery(patientIdConstructed, id);
+            @PathVariable String patientId, @PathVariable Long id) {
+        var query = new GetSessionByPatientIdAndSessionIdQuery(patientId, id);
         Optional<Session> session = sessionQueryService.handle(query);
         return session
                 .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
