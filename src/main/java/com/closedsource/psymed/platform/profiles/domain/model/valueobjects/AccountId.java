@@ -1,8 +1,11 @@
 package com.closedsource.psymed.platform.profiles.domain.model.valueobjects;
 
-public record AccountId(Long id) {
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public record AccountId(Long accountId) {
     public AccountId {
-        if (id == null) {
+        if (accountId == null) {
             throw new IllegalArgumentException("id cannot be null");
         }
     }
