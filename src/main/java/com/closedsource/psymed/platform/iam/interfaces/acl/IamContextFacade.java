@@ -4,7 +4,9 @@ import com.closedsource.psymed.platform.iam.domain.model.commands.SignUpCommand;
 import com.closedsource.psymed.platform.iam.domain.model.queries.GetAccountByIdQuery;
 import com.closedsource.psymed.platform.iam.domain.service.AccountCommandService;
 import com.closedsource.psymed.platform.iam.domain.service.AccountQueryService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class IamContextFacade {
     private final AccountCommandService accountCommandService;
     private final AccountQueryService accountQueryService;
