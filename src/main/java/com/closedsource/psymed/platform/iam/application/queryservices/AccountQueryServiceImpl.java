@@ -19,6 +19,9 @@ public class AccountQueryServiceImpl implements AccountQueryService {
 
     @Override
     public Optional<Account> handle(GetAccountByIdQuery query) {
-        return accountRepository.findById(query.id());
+//        return accountRepository.findById(query.id());
+        var accountFound = accountRepository.findById(query.id());
+        if(accountFound.isEmpty()) throw new IllegalArgumentException("Account not found");
+        return accountFound;
     }
 }
