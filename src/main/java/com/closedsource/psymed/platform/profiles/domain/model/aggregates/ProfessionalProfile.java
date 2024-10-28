@@ -1,6 +1,7 @@
 package com.closedsource.psymed.platform.profiles.domain.model.aggregates;
 
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CreateProfessionalProfileCommand;
+import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.AccountId;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.Email;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.PersonName;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.StreetAddress;
@@ -19,6 +20,9 @@ public class ProfessionalProfile extends AuditableAbstractAggregateRoot<Professi
     private Email email;
 
     @Embedded
+    AccountId accountId;
+
+    @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "street", column = @Column(name = "address_street")),
             @AttributeOverride(name = "city" , column = @Column(name = "address_city")),
@@ -32,10 +36,11 @@ public class ProfessionalProfile extends AuditableAbstractAggregateRoot<Professi
         this.email = new Email(email);
     }
 
-    public ProfessionalProfile(CreateProfessionalProfileCommand command) {
+    public ProfessionalProfile(CreateProfessionalProfileCommand command, AccountId accountId) {
         this.personName = new PersonName(command.firstName(), command.lastName());
         this.streetAddress = new StreetAddress(command.street(), command.city(), command.country());
         this.email = new Email(command.email());
+        this.accountId = accountId;
     }
 
 
