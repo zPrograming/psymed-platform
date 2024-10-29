@@ -30,7 +30,6 @@ public class Pill extends AuditableAbstractAggregateRoot<Pill> {
         this.quantity = quantity;
     }
 
-
     public Pill() {
 
     }
