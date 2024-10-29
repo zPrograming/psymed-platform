@@ -1,4 +1,4 @@
-package com.closedsource.psymed.platform.treatment.domain.commands;
+package com.closedsource.psymed.platform.treatment.domain.model.commands;
 
 public record CreateMedicationCommand(String title, String description) {
 
