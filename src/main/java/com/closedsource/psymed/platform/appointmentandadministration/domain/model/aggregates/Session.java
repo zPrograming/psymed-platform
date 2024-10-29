@@ -3,6 +3,7 @@ package com.closedsource.psymed.platform.appointmentandadministration.domain.mod
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -26,10 +27,12 @@ public class Session extends AbstractAggregateRoot<Session> {
 
     @Embedded
     @Getter
+    @NotNull
     private PatientId patientId;
 
     @Embedded
     @Getter
+    @NotNull
     private ProfessionalId professionalId;
 
     @Embedded
@@ -39,10 +42,6 @@ public class Session extends AbstractAggregateRoot<Session> {
     @Embedded
     @Getter
     private SessionTime sessionTime;
-
-    @Embedded
-    @Getter
-    private NoteId noteId;
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
@@ -61,10 +60,9 @@ public class Session extends AbstractAggregateRoot<Session> {
      */
     public Session(CreateSessionCommand command) {
         // You should now directly use the patientId and professionalId from the command, no need to wrap them again
-        this.patientId = command.patientId();
-        this.professionalId = command.professionalId();
+        this.patientId = new PatientId(command.patientId());
+        this.professionalId = new ProfessionalId(command.professionalId());
         this.appointmentDate = command.appointmentDate();
         this.sessionTime = command.sessionTime();
-        this.noteId = null;  // Note is not mandatory at session creation
     }
 }
