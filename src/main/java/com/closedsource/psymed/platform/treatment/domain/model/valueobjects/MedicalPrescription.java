@@ -27,9 +27,17 @@ public class MedicalPrescription {
     }
 
 
-    //public Pill getLastPillInMedicalPrescription(){
-        //Todo: get last pill in medical prescription
-    //}
+    public Pill getLastPillInMedicalPrescription() {
+        if (pills.isEmpty()) {
+            return null;
+        }
+        return pills.get(pills.size() - 1);
+    }
+
+    public void removePill(Pill pill){
+        if(pill == null) throw new IllegalStateException("Pill cannot be null");
+        this.pills.remove(pill);
+    }
 
 
 
