@@ -1,10 +1,8 @@
 package com.closedsource.psymed.platform.treatment.domain.model.entities;
 
 import com.closedsource.psymed.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.closedsource.psymed.platform.treatment.domain.model.aggregates.Medication;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -25,17 +23,15 @@ public class Pill extends AuditableAbstractAggregateRoot<Pill> {
     @NotNull
     private Integer quantity;
 
-
     public Pill(String name, String description, String frequency, Integer quantity){
         this.name = name;
         this.description = description;
         this.frequency = frequency;
         this.quantity = quantity;
-
     }
 
-    public Pill() {
 
+    public Pill() {
 
     }
 }
