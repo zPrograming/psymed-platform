@@ -31,7 +31,6 @@ public class MedicalPrescription {
         //Todo: get last pill in medical prescription
     //}
 
-    public MedicalPrescription g
 
 
     public boolean isEmpty(){ return pills.isEmpty();}
