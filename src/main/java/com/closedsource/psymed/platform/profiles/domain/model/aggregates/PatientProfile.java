@@ -1,6 +1,7 @@
 package com.closedsource.psymed.platform.profiles.domain.model.aggregates;
 
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CreatePatientProfileCommand;
+import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.AccountId;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.Email;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.PersonName;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.StreetAddress;
@@ -29,16 +30,20 @@ public class PatientProfile extends AuditableAbstractAggregateRoot<PatientProfil
     @Embedded
     private Email email;
 
+    @Embedded
+    private AccountId accountId;
+
     public PatientProfile(String firstName, String lastName, String street, String city, String country, String email){
         this.personName = new PersonName(firstName, lastName);
         this.streetAddress = new StreetAddress(street, city, country);
         this.email = new Email(email);
     }
 
-    public PatientProfile(CreatePatientProfileCommand command) {
+    public PatientProfile(CreatePatientProfileCommand command, AccountId accountId) {
         this.personName = new PersonName(command.firstName(), command.lastName());
         this.email = new Email(command.email());
         this.streetAddress = new StreetAddress(command.street(), command.city(), command.country());
+        this.accountId = accountId;
     }
 
     public void updateEmail(String email) {
