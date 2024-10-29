@@ -2,6 +2,8 @@ package com.closedsource.psymed.platform.treatment.domain.model.commands;
 
 public record CreateMedicationCommand(String title, String description) {
 
+    //Todo: add date created and end
+
     public CreateMedicationCommand{
         if(title == null || title.isBlank())
             throw new IllegalArgumentException("Title cannot be null or blank");
