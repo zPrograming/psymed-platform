@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface MedicationRepository extends JpaRepository<Medication, Long> {
     Optional<Medication> findByName(String name);
     boolean existsByName(String name);
-    //boolean existsById(Long id);
 }
