@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 public class MedicationCommandServiceImpl implements MedicationCommandService {
     @Override
     public Long handle(CreateMedicationCommand command) {
+        return 0L;
     }
 
     @Override
     public void handle(DeleteMedicationCommand command) {
+
     }
 }
