@@ -1,10 +1,13 @@
 package com.closedsource.psymed.platform.medication.domain.model.aggregates;
 
 import com.closedsource.psymed.platform.medication.domain.model.commands.CreateMedicationCommand;
+import jakarta.persistence.Entity;
 import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class Medication {
+    private Long Id;
     private String name;
     private String description;
 
