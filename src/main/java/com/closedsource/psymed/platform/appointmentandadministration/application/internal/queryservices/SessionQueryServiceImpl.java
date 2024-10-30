@@ -1,7 +1,10 @@
 package com.closedsource.psymed.platform.appointmentandadministration.application.internal.queryservices;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.*;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByPatientIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByProfessionalIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByPatientIdAndSessionIdQuery;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionQueryService;

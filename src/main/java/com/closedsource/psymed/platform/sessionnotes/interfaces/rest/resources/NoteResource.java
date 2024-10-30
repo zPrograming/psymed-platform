@@ -1,4 +1,4 @@
-package com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources;
+package com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources;
 
 public record NoteResource(
         Long id,

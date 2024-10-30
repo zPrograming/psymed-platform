@@ -1,6 +1,6 @@
-package com.closedsource.psymed.platform.appointmentandadministration.domain.model.entities;
+package com.closedsource.psymed.platform.sessionnotes.domain.model.entities;
 
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateNoteCommand;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.commands.CreateNoteCommand;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.domain.AbstractAggregateRoot;
