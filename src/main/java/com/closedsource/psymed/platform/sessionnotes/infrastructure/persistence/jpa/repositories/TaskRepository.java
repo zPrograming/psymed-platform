@@ -1,7 +1,7 @@
-package com.closedsource.psymed.platform.treatmentmanagement.infrastructure.persistance.jpa.repositories;
+package com.closedsource.psymed.platform.sessionnotes.infrastructure.persistence.jpa.repositories;
 
 
-import com.closedsource.psymed.platform.treatmentmanagement.domain.model.entities.Task;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
