@@ -1,13 +1,20 @@
 package com.closedsource.psymed.platform.medication.domain.model.aggregates;
 
 import com.closedsource.psymed.platform.medication.domain.model.commands.CreateMedicationCommand;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
+@Getter
 @Entity
 @NoArgsConstructor
 public class Medication {
-    private Long Id;
+
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String name;
     private String description;
 
@@ -20,4 +27,7 @@ public class Medication {
         this.name = command.name();
         this.description = command.description();
     }
+
+
+
 }
