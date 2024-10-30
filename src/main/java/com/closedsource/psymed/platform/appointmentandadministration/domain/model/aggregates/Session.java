@@ -1,9 +1,14 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.*;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.entities.Note;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.AppointmentDate;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -40,9 +45,11 @@ public class Session extends AbstractAggregateRoot<Session> {
     @Getter
     private SessionTime sessionTime;
 
-    @Embedded
+    @ManyToOne
+    @JoinColumn(name = "notes")
     @Getter
-    private NoteId noteId;
+    @Setter
+    private Note note;
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
@@ -65,6 +72,8 @@ public class Session extends AbstractAggregateRoot<Session> {
         this.professionalId = command.professionalId();
         this.appointmentDate = command.appointmentDate();
         this.sessionTime = command.sessionTime();
-        this.noteId = null;  // Note is not mandatory at session creation
+        this.note = null;  // Note is not mandatory at session creation
     }
+
+
 }

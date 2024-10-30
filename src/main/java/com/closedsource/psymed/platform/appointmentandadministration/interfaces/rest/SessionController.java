@@ -1,10 +1,14 @@
 package com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.entities.Note;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.*;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.services.NoteQueryService;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionQueryService;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.CreateSessionResource;
+import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.NoteResource;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.SessionResource;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.CreateSessionCommandFromResourceAssembler;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.SessionFromEntityAssembler;
@@ -32,6 +36,9 @@ public class SessionController {
     private final SessionCommandService sessionCommandService;
     private final SessionQueryService sessionQueryService;
 
+    private final NoteQueryService noteQueryService;
+
+
     /**
      * Constructor to inject services required for session operations.
      *
@@ -39,9 +46,10 @@ public class SessionController {
      * @param sessionQueryService   The service responsible for handling session queries.
      */
     public SessionController(SessionCommandService sessionCommandService,
-                             SessionQueryService sessionQueryService) {
+                             SessionQueryService sessionQueryService, NoteQueryService noteQueryService) {
         this.sessionCommandService = sessionCommandService;
         this.sessionQueryService = sessionQueryService;
+        this.noteQueryService = noteQueryService;
     }
 
     /**
@@ -106,6 +114,44 @@ public class SessionController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note set"),
+            @ApiResponse(responseCode = "400", description = "Session not found"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
+    @PostMapping("/{sessionId}/setNote/{noteId}")
+    public ResponseEntity<SessionResource> setNote(@PathVariable Long noteId, @PathVariable Long sessionId) {
+
+        Optional<Note> note = noteQueryService.handle(new GetNoteByIdQuery(noteId));
+        if (note.isEmpty()) return ResponseEntity.notFound().build();
+
+        Optional<Session> sessionData = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionData.isEmpty()) return ResponseEntity.badRequest().build();
+
+        Optional<Session> sessionResources =  sessionCommandService.handle(new UpdateSessionNoteCommand(sessionId, note.get()));
+
+        return sessionResources
+                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
+                .orElseGet(() -> ResponseEntity.internalServerError().build());
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note set"),
+            @ApiResponse(responseCode = "400", description = "Session not found"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
+    @GetMapping("/{sessionId}/note")
+    public ResponseEntity<SessionResource> getNoteBySessionId(@PathVariable Long sessionId) {
+
+        Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
+
+        return sessionResource
+                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
+                .orElseGet(() -> ResponseEntity.internalServerError().build());
+    }
     /**
      * Retrieves all sessions for a specific patient by their patient ID.
      *
@@ -128,6 +174,9 @@ public class SessionController {
                 .toList();
         return ResponseEntity.ok(sessionResources);
     }
+
+
+
 
     /**
      * Retrieves all sessions for a specific professional by their professional ID.
