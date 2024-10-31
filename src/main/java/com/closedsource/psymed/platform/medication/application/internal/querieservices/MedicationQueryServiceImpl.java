@@ -36,4 +36,9 @@ public class MedicationQueryServiceImpl implements MedicationQueryService {
 
         return medicationRepository.findById(query.medicationId());
     }
+
+    @Override
+    public Optional<Medication> handle(GetMedicationByIdQuery getMedicationByIdQuery) {
+        return Optional.empty();
+    }
 }
