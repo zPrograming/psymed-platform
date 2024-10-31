@@ -14,10 +14,12 @@ import java.util.Optional;
 public class MedicationQueryServiceImpl implements MedicationQueryService {
     @Override
     public Optional<Medication> handle(GetMedicationByNameQuery query) {
+        return Optional.empty();
     }
 
     @Override
     public List<Medication> handle(GetAllMedicationsQuery query) {
+        return List.of();
     }
 
     @Override
