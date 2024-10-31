@@ -17,10 +17,10 @@ public class SessionFromEntityAssembler {
     public static SessionResource toResourceFromEntity(Session entity) {
         return new SessionResource(
                 entity.getId(),
-                entity.getPatientId().toString(),
-                entity.getProfessionalId().toString(),
-                entity.getAppointmentDate().toString(),
-                entity.getSessionTime().getDurationInHours()
+                entity.getPatientIdAsLong(),
+                entity.getProfessionalIdAsLong(),
+                entity.getAppointmentDate().getAppointmentDate(),
+                entity.getDurationAsDouble()
         );
     }
 }
