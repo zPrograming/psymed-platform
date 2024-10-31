@@ -2,6 +2,7 @@ package com.closedsource.psymed.platform.medication.application.internal.queries
 
 import com.closedsource.psymed.platform.medication.domain.model.aggregates.Medication;
 import com.closedsource.psymed.platform.medication.domain.model.queries.GetAllMedicationsQuery;
+import com.closedsource.psymed.platform.medication.domain.model.queries.GetMedicationByIdQuery;
 import com.closedsource.psymed.platform.medication.domain.model.queries.GetMedicationByNameQuery;
 import com.closedsource.psymed.platform.medication.domain.services.MedicationQueryService;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,10 @@ public class MedicationQueryServiceImpl implements MedicationQueryService {
     @Override
     public List<Medication> handle(GetAllMedicationsQuery query) {
         return List.of();
+    }
+
+    @Override
+    public Optional<Medication> handle(GetMedicationByIdQuery getMedicationByIdQuery) {
+        return Optional.empty();
     }
 }
