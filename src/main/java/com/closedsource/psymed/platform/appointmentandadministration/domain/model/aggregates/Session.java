@@ -65,4 +65,16 @@ public class Session extends AbstractAggregateRoot<Session> {
         this.appointmentDate = command.appointmentDate();
         this.sessionTime = command.sessionTime();
     }
+
+    public Long getPatientIdAsLong() {
+        return this.patientId.patientId();
+    }
+
+    public Long getProfessionalIdAsLong() {
+        return this.professionalId.professionalId();
+    }
+
+    public double getDurationAsDouble() {
+        return this.sessionTime.getDurationInHours();
+    }
 }
