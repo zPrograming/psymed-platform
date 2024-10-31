@@ -23,10 +23,10 @@ public class MedicationCommandServiceImpl implements MedicationCommandService {
 
         try {
             medicationRepository.save(medication);
-            return medication.getId();
         }catch(Exception e){
             throw new IllegalArgumentException(String.format("Error creating the medication %s", e.getMessage()));
         }
+        return medication.getId();
     }
 
     @Override

@@ -1,13 +1,14 @@
-package com.closedsource.psymed.platform.medication.interfaces.rest.transform;
+package com.closedsource.psymed.platform.medication.interfaces;
 
 import com.closedsource.psymed.platform.medication.domain.model.commands.DeleteMedicationCommand;
 import com.closedsource.psymed.platform.medication.domain.model.queries.GetAllMedicationsQuery;
 import com.closedsource.psymed.platform.medication.domain.model.queries.GetMedicationByIdQuery;
-import com.closedsource.psymed.platform.medication.domain.model.queries.GetMedicationByNameQuery;
 import com.closedsource.psymed.platform.medication.domain.services.MedicationCommandService;
 import com.closedsource.psymed.platform.medication.domain.services.MedicationQueryService;
 import com.closedsource.psymed.platform.medication.interfaces.rest.resources.CreateMedicationResource;
 import com.closedsource.psymed.platform.medication.interfaces.rest.resources.MedicationResource;
+import com.closedsource.psymed.platform.medication.interfaces.rest.transform.CreateMedicationCommandFromResourceAssembler;
+import com.closedsource.psymed.platform.medication.interfaces.rest.transform.MedicationResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -48,6 +49,7 @@ public class MedicationController {
         if (medicationId == null || medicationId == 0L) return ResponseEntity.badRequest().build();
         var getMedicationByIdQuery = new GetMedicationByIdQuery(medicationId);
         var medication = medicationQueryService.handle(getMedicationByIdQuery);
+
         if(medication.isEmpty()) return ResponseEntity.notFound().build();
         var medicationEntity = medication.get();
         var medicationSource = MedicationResourceFromEntityAssembler.toResourceFromEntity(medicationEntity);
