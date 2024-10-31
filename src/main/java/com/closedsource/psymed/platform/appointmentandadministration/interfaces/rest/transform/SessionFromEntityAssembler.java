@@ -20,8 +20,7 @@ public class SessionFromEntityAssembler {
                 entity.getPatientId().toString(),
                 entity.getProfessionalId().toString(),
                 entity.getAppointmentDate().toString(),
-                entity.getSessionTime().getDurationInHours(),
-                entity.getNoteId() != null ? entity.getNoteId().toString() : null
+                entity.getSessionTime().getDurationInHours()
         );
     }
 }
