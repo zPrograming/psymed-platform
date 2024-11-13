@@ -28,14 +28,14 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     @Transactional
     public Optional<Session> handle(CreateSessionCommand command) {
         // Check if the patient and professional exist
-        boolean patientExists = externalProfileService.existsPatientById(command.patientId());
-        boolean professionalExists = externalProfileService.existsProfessionalById(command.professionalId());
+        boolean patientExists = externalProfileService.existsPatientById(command.patientId().patientId());
+        boolean professionalExists = externalProfileService.existsProfessionalById(command.professionalId().professionalId());
 
         if (!patientExists) {
-            throw new PatientNotFoundException(command.patientId()); // Custom exception for patient not found
+            throw new PatientNotFoundException(command.patientId().patientId()); // Custom exception for patient not found
         }
         if (!professionalExists) {
-            throw new ProfessionalNotFoundException(command.professionalId()); // Custom exception for professional not found
+            throw new ProfessionalNotFoundException(command.professionalId().professionalId()); // Custom exception for professional not found
         }
 
         // Create a new session based on the command

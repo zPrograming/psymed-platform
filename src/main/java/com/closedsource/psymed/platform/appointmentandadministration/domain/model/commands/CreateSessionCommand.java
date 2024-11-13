@@ -6,8 +6,8 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.mode
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
 
 public record CreateSessionCommand(
-        Long patientId,
-        Long professionalId,
+        PatientId patientId,
+        ProfessionalId professionalId,
         AppointmentDate appointmentDate,
         SessionTime sessionTime) {
 

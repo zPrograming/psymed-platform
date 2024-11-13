@@ -14,5 +14,6 @@ public record SessionResource(
         String patientId,
         String professionalId,
         String appointmentDate,
-        double sessionTime) {
+        double sessionTime,
+        String noteId) {
 }

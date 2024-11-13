@@ -7,7 +7,7 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.mode
  * @param patientId The ID of the patient.
  * @param id The ID of the appointment.
  */
-public record GetSessionByPatientIdAndSessionIdQuery(PatientId patientId, Long id) {
+public record GetSessionByPatientIdAndSessionIdQuery(String patientId, Long id) {
     public GetSessionByPatientIdAndSessionIdQuery {
         if (patientId == null) {
             throw new IllegalArgumentException("patientId cannot be null or less than or equal to 0");

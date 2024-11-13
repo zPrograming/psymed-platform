@@ -220,6 +220,7 @@ public class SessionController {
     @GetMapping("/patient/{patientId}/session/{id}")
     public ResponseEntity<SessionResource> getSessionByPatientIdAndId(
             @PathVariable String patientId, @PathVariable Long id) {
+
         var query = new GetSessionByPatientIdAndSessionIdQuery(patientId, id);
         Optional<Session> session = sessionQueryService.handle(query);
         return session
