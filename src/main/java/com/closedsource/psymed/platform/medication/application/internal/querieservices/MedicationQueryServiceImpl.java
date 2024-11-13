@@ -31,4 +31,9 @@ public class MedicationQueryServiceImpl implements MedicationQueryService {
     public Optional<Medication> handle(GetMedicationByIdQuery getMedicationByIdQuery) {
         return Optional.empty();
     }
+
+    @Override
+    public Optional<Medication> handle(GetMedicationByIdQuery getMedicationByIdQuery) {
+        return Optional.empty();
+    }
 }

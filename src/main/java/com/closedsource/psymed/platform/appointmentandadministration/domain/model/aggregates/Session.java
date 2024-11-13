@@ -1,11 +1,11 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.entities.Note;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.AppointmentDate;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

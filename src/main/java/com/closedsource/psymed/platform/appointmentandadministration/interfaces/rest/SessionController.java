@@ -2,16 +2,19 @@ package com.closedsource.psymed.platform.appointmentandadministration.interfaces
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.entities.Note;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.*;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.services.NoteQueryService;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByPatientIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByProfessionalIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByPatientIdAndSessionIdQuery;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionQueryService;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.CreateSessionResource;
-import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.NoteResource;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.SessionResource;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.CreateSessionCommandFromResourceAssembler;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.SessionFromEntityAssembler;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.queries.GetNoteByIdQuery;
+import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
