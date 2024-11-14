@@ -6,7 +6,7 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.mode
  * Query to get all appointments for a specific patient.
  * @param patientId The unique ID of the patient.
  */
-public record GetAllSessionsByPatientIdQuery(PatientId patientId) {
+public record GetAllSessionsByPatientIdQuery(String patientId) {
     public GetAllSessionsByPatientIdQuery {
         if (patientId == null) {
             throw new IllegalArgumentException("patientId cannot be null or empty");

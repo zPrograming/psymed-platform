@@ -6,7 +6,7 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.mode
  * Query to get all appointments for a specific professional.
  * @param professionalId The unique ID of the professional.
  */
-public record GetAllSessionsByProfessionalIdQuery(ProfessionalId professionalId) {
+public record GetAllSessionsByProfessionalIdQuery(String professionalId) {
     public GetAllSessionsByProfessionalIdQuery {
         if (professionalId == null) {
             throw new IllegalArgumentException("professionalId cannot be null or less than or equal to 0");

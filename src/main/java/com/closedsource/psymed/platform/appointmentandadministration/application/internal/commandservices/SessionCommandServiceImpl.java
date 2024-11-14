@@ -5,6 +5,7 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.exce
 import com.closedsource.psymed.platform.appointmentandadministration.domain.exceptions.ProfessionalNotFoundException;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.infrastructure.persistence.jpa.repositories.SessionRepository;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,14 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     @Transactional
     public Optional<Session> handle(CreateSessionCommand command) {
         // Check if the patient and professional exist
-        boolean patientExists = externalProfileService.existsPatientById(command.patientId());
-        boolean professionalExists = externalProfileService.existsProfessionalById(command.professionalId());
+        boolean patientExists = externalProfileService.existsPatientById(command.patientId().patientId());
+        boolean professionalExists = externalProfileService.existsProfessionalById(command.professionalId().professionalId());
 
         if (!patientExists) {
-            throw new PatientNotFoundException(command.patientId()); // Custom exception for patient not found
+            throw new PatientNotFoundException(command.patientId().patientId()); // Custom exception for patient not found
         }
         if (!professionalExists) {
-            throw new ProfessionalNotFoundException(command.professionalId()); // Custom exception for professional not found
+            throw new ProfessionalNotFoundException(command.professionalId().professionalId()); // Custom exception for professional not found
         }
 
         // Create a new session based on the command
@@ -42,4 +43,16 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         var createdSession = sessionRepository.save(session);
         return Optional.of(createdSession);
     }
+
+    @Override
+    public Optional<Session> handle(UpdateSessionNoteCommand command) {
+
+        var session = sessionRepository.findById(command.id()).get();
+        session.setNote(command.note());
+
+        var optionalSession = sessionRepository.save(session);
+
+        return Optional.of(optionalSession);
+    }
+
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 //@NoArgsConstructor
-public class Medication {
+public class Medication extends AuditableAbstractAggregateRoot<Medication> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

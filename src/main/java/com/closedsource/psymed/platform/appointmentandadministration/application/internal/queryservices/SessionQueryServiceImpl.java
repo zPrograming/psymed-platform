@@ -1,7 +1,10 @@
 package com.closedsource.psymed.platform.appointmentandadministration.application.internal.queryservices;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.*;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByPatientIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByProfessionalIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByPatientIdAndSessionIdQuery;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionQueryService;
@@ -23,19 +26,22 @@ public class SessionQueryServiceImpl implements SessionQueryService {
     @Override
     public List<Session> handle(GetAllSessionsByPatientIdQuery query) {
 
-        return sessionRepository.findAllByPatientId(query.patientId());
+        Long patientIdAsLong = Long.parseLong(query.patientId()); // Convert String to Long
+
+        return sessionRepository.findAllByPatientId(new PatientId(patientIdAsLong));
     }
 
     @Override
     public List<Session> handle(GetAllSessionsByProfessionalIdQuery query) {
- // Convert String to Long
-        return sessionRepository.findAllByProfessionalId(query.professionalId());
+
+        Long professionalIdAsLong = Long.parseLong(query.professionalId()); // Convert String to Long
+        return sessionRepository.findAllByProfessionalId(new ProfessionalId(professionalIdAsLong));
     }
 
     @Override
     public Optional<Session> handle(GetSessionByPatientIdAndSessionIdQuery query) {
- // Convert String to Long
-        return sessionRepository.findByPatientIdAndId(query.patientId(), query.id());
+        Long patientIdAsLong = Long.parseLong(query.patientId()); // Convert String to Long
+        return sessionRepository.findByPatientIdAndId(new PatientId(patientIdAsLong), query.id());
     }
 
     @Override

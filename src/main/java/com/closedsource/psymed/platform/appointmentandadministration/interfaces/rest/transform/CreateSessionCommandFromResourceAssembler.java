@@ -1,11 +1,11 @@
 package com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.CreateSessionResource;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.AppointmentDate;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.AppointmentDate;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
+import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.CreateSessionResource;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,8 +32,8 @@ public class CreateSessionCommandFromResourceAssembler {
         Date appointmentDate = parseDate(resource.appointmentDate());
 
         return new CreateSessionCommand(
-                new PatientId(patientId).patientId(),
-                new ProfessionalId(professionalId).professionalId(),
+                new PatientId(patientId),
+                new ProfessionalId(professionalId),
                 new AppointmentDate(appointmentDate),
                 new SessionTime(resource.sessionTime())
         );
