@@ -14,12 +14,17 @@ import com.closedsource.psymed.platform.appointmentandadministration.interfaces.
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.SessionFromEntityAssembler;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.commands.CreateNoteCommand;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.queries.GetNoteByIdQuery;
 import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteCommandService;
 import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteQueryService;
 import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.NoteController;
 import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.CreateNoteResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.NoteResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.TaskResource;
 import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.CreateNoteCommandFromResourceAssembler;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.NoteFromEntityAssembler;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.TaskFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -170,19 +175,40 @@ public class SessionController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Note set"),
+            @ApiResponse(responseCode = "200", description = "Note found"),
             @ApiResponse(responseCode = "400", description = "Session not found"),
             @ApiResponse(responseCode = "404", description = "Note not found")
     })
     @GetMapping("/{sessionId}/note")
-    public ResponseEntity<SessionResource> getNoteBySessionId(@PathVariable Long sessionId) {
+    public ResponseEntity<NoteResource> getNoteBySessionId(@PathVariable Long sessionId) {
 
         Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
 
         if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
 
-        return sessionResource
-                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
+        Optional<Note> note = Optional.of(sessionResource.get().getNote());
+
+        return note
+                .map(n -> ResponseEntity.ok(NoteFromEntityAssembler.toResourceFromEntity(n)))
+                .orElseGet(() -> ResponseEntity.internalServerError().build());
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task found"),
+            @ApiResponse(responseCode = "400", description = "Session not found"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
+    @GetMapping("/{sessionId}/task")
+    public ResponseEntity<TaskResource> getTaskById(@PathVariable Long sessionId) {
+
+        Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
+
+        Optional<Task> task = Optional.of(sessionResource.get().getTask());
+
+        return task
+                .map(t -> ResponseEntity.ok(TaskFromEntityAssembler.toResourceFromEntity(t)))
                 .orElseGet(() -> ResponseEntity.internalServerError().build());
     }
     /**

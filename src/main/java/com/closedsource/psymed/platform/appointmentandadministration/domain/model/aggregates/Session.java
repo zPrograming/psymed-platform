@@ -6,6 +6,7 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.mode
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,12 @@ public class Session extends AbstractAggregateRoot<Session> {
     @Getter
     @Setter
     private Note note;
+
+    @ManyToOne
+    @JoinColumn(name = "tasks")
+    @Getter
+    @Setter
+    private Task task;
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
