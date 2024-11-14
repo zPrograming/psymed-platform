@@ -2,7 +2,9 @@ package com.closedsource.psymed.platform.appointmentandadministration.domain.ser
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionNoteCommand;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
 
 import java.util.Optional;
 
@@ -24,12 +26,22 @@ public interface SessionCommandService {
     Optional<Session> handle(CreateSessionCommand command);
 
     /**
+     * Handle the command to update an appointment.
+     *
+     * @param command the command to create an appointment
+     * @return the updated appointment
+     * @throws IllegalArgumentException if the command is invalid
+     * @see UpdateSessionNoteCommand
+     */
+    Optional<Session> handle(UpdateSessionNoteCommand command);
+
+    /**
      * Handle the command to create an appointment.
      *
      * @param command the command to create an appointment
      * @return the created appointment
      * @throws IllegalArgumentException if the command is invalid
-     * @see UpdateSessionNoteCommand
+     * @see CreateSessionNoteCommand
      */
-    Optional<Session> handle(UpdateSessionNoteCommand command);
+    Optional<Note> handle(CreateSessionNoteCommand command);
 }

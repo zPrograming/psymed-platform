@@ -5,9 +5,11 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.exce
 import com.closedsource.psymed.platform.appointmentandadministration.domain.exceptions.ProfessionalNotFoundException;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionNoteCommand;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.infrastructure.persistence.jpa.repositories.SessionRepository;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,16 @@ public class SessionCommandServiceImpl implements SessionCommandService {
         var optionalSession = sessionRepository.save(session);
 
         return Optional.of(optionalSession);
+    }
+
+    @Override
+    public Optional<Note> handle(CreateSessionNoteCommand command) {
+        var session = sessionRepository.findById(command.id()).get();
+        session.setNote(command.note());
+
+        var optionalSession = sessionRepository.save(session);
+
+        return Optional.of(optionalSession.getNote());
     }
 
 }

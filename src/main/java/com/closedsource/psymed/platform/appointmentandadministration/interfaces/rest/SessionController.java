@@ -12,9 +12,14 @@ import com.closedsource.psymed.platform.appointmentandadministration.interfaces.
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.SessionResource;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.CreateSessionCommandFromResourceAssembler;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.SessionFromEntityAssembler;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.commands.CreateNoteCommand;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.queries.GetNoteByIdQuery;
+import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteCommandService;
 import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteQueryService;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.NoteController;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.CreateNoteResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.CreateNoteCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -39,6 +44,7 @@ public class SessionController {
     private final SessionCommandService sessionCommandService;
     private final SessionQueryService sessionQueryService;
 
+    private final NoteCommandService noteCommandService;
     private final NoteQueryService noteQueryService;
 
 
@@ -49,9 +55,12 @@ public class SessionController {
      * @param sessionQueryService   The service responsible for handling session queries.
      */
     public SessionController(SessionCommandService sessionCommandService,
-                             SessionQueryService sessionQueryService, NoteQueryService noteQueryService) {
+                             SessionQueryService sessionQueryService,
+                             NoteCommandService noteCommandService,
+                             NoteQueryService noteQueryService) {
         this.sessionCommandService = sessionCommandService;
         this.sessionQueryService = sessionQueryService;
+        this.noteCommandService = noteCommandService;
         this.noteQueryService = noteQueryService;
     }
 
@@ -77,8 +86,7 @@ public class SessionController {
     }
 
     /**
-     * Retrieves all sessions.
-     *
+     * Retrieves all sessions.*
      * @return A ResponseEntity containing a list of sessions or a not found status.
      */
     @Operation(summary = "Get all sessions",
@@ -122,8 +130,8 @@ public class SessionController {
             @ApiResponse(responseCode = "400", description = "Session not found"),
             @ApiResponse(responseCode = "404", description = "Note not found")
     })
-    @PostMapping("/{sessionId}/setNote/{noteId}")
-    public ResponseEntity<SessionResource> setNote(@PathVariable Long noteId, @PathVariable Long sessionId) {
+    @PutMapping("/{sessionId}/setNote/{noteId}")
+    public ResponseEntity<SessionResource> setNote(@PathVariable Long sessionId, @PathVariable Long noteId) {
 
         Optional<Note> note = noteQueryService.handle(new GetNoteByIdQuery(noteId));
         if (note.isEmpty()) return ResponseEntity.notFound().build();
@@ -135,6 +143,28 @@ public class SessionController {
         Optional<Session> sessionResources =  sessionCommandService.handle(new UpdateSessionNoteCommand(sessionId, note.get()));
 
         return sessionResources
+                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
+                .orElseGet(() -> ResponseEntity.internalServerError().build());
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note set"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @PutMapping("/{sessionId}/createNote/")
+    public ResponseEntity<SessionResource> createNote(@PathVariable Long sessionId, @RequestBody CreateNoteResource createNoteResource) {
+
+        Optional<Session> sessionData = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionData.isEmpty()) return ResponseEntity.badRequest().build();
+
+        CreateNoteCommand createNoteCommand = CreateNoteCommandFromResourceAssembler.toCommandFromResource(createNoteResource);
+
+        Note note = noteCommandService.handle(createNoteCommand).get();
+
+        var noteResult = sessionCommandService.handle(new UpdateSessionNoteCommand(sessionId, note));
+
+        return noteResult
                 .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
                 .orElseGet(() -> ResponseEntity.internalServerError().build());
     }
