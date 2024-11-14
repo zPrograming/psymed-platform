@@ -58,12 +58,6 @@ public class Session extends AbstractAggregateRoot<Session> {
     @Setter
     private List<Task> tasks;
 
-    @ManyToOne
-    @JoinColumn(name = "tasks")
-    @Getter
-    @Setter
-    private Task task;
-
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private Date createdAt;
