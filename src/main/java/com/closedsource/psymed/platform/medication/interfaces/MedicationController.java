@@ -9,6 +9,7 @@ import com.closedsource.psymed.platform.medication.interfaces.rest.resources.Cre
 import com.closedsource.psymed.platform.medication.interfaces.rest.resources.MedicationResource;
 import com.closedsource.psymed.platform.medication.interfaces.rest.transform.CreateMedicationCommandFromResourceAssembler;
 import com.closedsource.psymed.platform.medication.interfaces.rest.transform.MedicationResourceFromEntityAssembler;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.TreatmentTaskFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -71,13 +72,31 @@ public class MedicationController {
         return ResponseEntity.ok(medicationResources);
     }
 
+    @Operation(summary = "Get a medication")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Medic deleted"),
+            @ApiResponse(responseCode = "404", description = "Medic not found")
+    })
+    @GetMapping("/{medicationId}")
+    public ResponseEntity<?> getMedicationById(@PathVariable Long medicationId) {
+
+        var getMedicationByIdCommand = new GetMedicationByIdQuery(medicationId);
+
+        var medication = medicationQueryService.handle(getMedicationByIdCommand);
+        if (medication.isEmpty()) return ResponseEntity.notFound().build();
+
+        return medication
+                .map(m -> ResponseEntity.ok(MedicationResourceFromEntityAssembler.toResourceFromEntity(m)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @Operation(summary = "Delete a medication")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course deleted"),
             @ApiResponse(responseCode = "404", description = "Course not found")
     })
     @DeleteMapping("/{medicationId}")
-    public ResponseEntity<?> deleteMedication(@PathVariable Long medicationId){
+    public ResponseEntity<?> deleteMedication(@PathVariable Long medicationId) {
         var deleteMedicationCommand = new DeleteMedicationCommand(medicationId);
         medicationCommandService.handle(deleteMedicationCommand);
         return ResponseEntity.ok("Medication with given id successfully deleted");
