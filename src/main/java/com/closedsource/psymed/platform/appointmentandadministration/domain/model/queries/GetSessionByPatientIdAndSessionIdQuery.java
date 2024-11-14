@@ -1,7 +1,5 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries;
 
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.PatientId;
-
 /**
  * Query to get a specific appointment for a patient by appointment ID.
  * @param patientId The ID of the patient.

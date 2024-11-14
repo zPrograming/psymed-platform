@@ -1,7 +1,5 @@
 package com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries;
 
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
-
 /**
  * Query to get all appointments for a specific professional.
  * @param professionalId The unique ID of the professional.

@@ -4,15 +4,17 @@ import com.closedsource.psymed.platform.appointmentandadministration.application
 import com.closedsource.psymed.platform.appointmentandadministration.domain.exceptions.PatientNotFoundException;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.exceptions.ProfessionalNotFoundException;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionNoteCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.*;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.infrastructure.persistence.jpa.repositories.SessionRepository;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.CreateNoteResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.CreateTaskResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,24 +49,73 @@ public class SessionCommandServiceImpl implements SessionCommandService {
     }
 
     @Override
-    public Optional<Session> handle(UpdateSessionNoteCommand command) {
+    public Optional<Note> handle(CreateSessionNoteCommand command) {
+        Optional<Session> session = sessionRepository.findById(command.id());
 
-        var session = sessionRepository.findById(command.id()).get();
-        session.setNote(command.note());
+        List<Note> notes = session.get().getNotes();
+        notes.add(command.note());
 
-        var optionalSession = sessionRepository.save(session);
-
-        return Optional.of(optionalSession);
+        return Optional.of(command.note());
     }
 
     @Override
-    public Optional<Note> handle(CreateSessionNoteCommand command) {
-        var session = sessionRepository.findById(command.id()).get();
-        session.setNote(command.note());
+    public Optional<Task> handle(CreateSessionTaskCommand command) {
 
-        var optionalSession = sessionRepository.save(session);
+        Optional<Session> session = sessionRepository.findById(command.id());
 
-        return Optional.of(optionalSession.getNote());
+        List<Task> tasks = session.get().getTasks();
+        tasks.add(command.task());
+
+        return Optional.of(command.task());
     }
+
+
+    @Override
+    public Optional<Note> handle(UpdateSessionNoteCommand command) {
+        Optional<Session> session = sessionRepository.findById(command.id());
+
+        List<Note> notes = session.get().getNotes();
+
+        CreateNoteResource requestedNote = command.note();
+        Note oldNote = notes.get(command.noteId());
+
+        oldNote.setDescription(requestedNote.description());
+        oldNote.setSymptoms(requestedNote.symptom());
+
+        return Optional.of(oldNote);
+    }
+
+    @Override
+    public Optional<Task> handle(UpdateSessionTaskCommand command) {
+        Optional<Session> session = sessionRepository.findById(command.id());
+
+        List<Task> tasks = session.get().getTasks();
+
+        CreateTaskResource requestedTask = command.task();
+        Task oldTask = tasks.get(command.taskId());
+
+        oldTask.setDescription(requestedTask.description());
+        oldTask.setTitle(requestedTask.title());
+        oldTask.setCompletionStatus(requestedTask.completionStatus());
+
+        return Optional.of(oldTask);
+    }
+
+    @Override
+    public void handle(DeleteSessionNoteCommand command) {
+        Optional<Session> session = sessionRepository.findById(command.id());
+
+        List<Task> tasks = session.get().getTasks();
+        tasks.remove(command.noteId());
+    }
+
+    @Override
+    public void handle(DeleteSessionTaskCommand command) {
+        Optional<Session> session = sessionRepository.findById(command.id());
+
+        List<Task> tasks = session.get().getTasks();
+        tasks.remove(command.taskId());
+    }
+
 
 }

@@ -6,6 +6,7 @@ import com.closedsource.psymed.platform.appointmentandadministration.domain.mode
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.ProfessionalId;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.valueobjects.SessionTime;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Session aggregate that represents a session between a patient and a professional.
@@ -45,11 +48,15 @@ public class Session extends AbstractAggregateRoot<Session> {
     @Getter
     private SessionTime sessionTime;
 
-    @ManyToOne
-    @JoinColumn(name = "notes")
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @Getter
     @Setter
-    private Note note;
+    private List<Note> notes;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    @Getter
+    @Setter
+    private List<Task> tasks;
 
     @Column(nullable = false, updatable = false)
     @CreatedDate
@@ -72,7 +79,7 @@ public class Session extends AbstractAggregateRoot<Session> {
         this.professionalId = command.professionalId();
         this.appointmentDate = command.appointmentDate();
         this.sessionTime = command.sessionTime();
-        this.note = null;  // Note is not mandatory at session creation
+        this.notes = new ArrayList<>();
     }
 
 

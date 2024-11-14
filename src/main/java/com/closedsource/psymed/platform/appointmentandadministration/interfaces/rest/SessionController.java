@@ -1,25 +1,24 @@
 package com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest;
 
 import com.closedsource.psymed.platform.appointmentandadministration.domain.model.aggregates.Session;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionNoteCommand;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByPatientIdQuery;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetAllSessionsByProfessionalIdQuery;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByIdQuery;
-import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.GetSessionByPatientIdAndSessionIdQuery;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.CreateSessionNoteCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.commands.UpdateSessionTaskCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.domain.model.queries.*;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionCommandService;
 import com.closedsource.psymed.platform.appointmentandadministration.domain.services.SessionQueryService;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.CreateSessionResource;
 import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources.SessionResource;
-import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.CreateSessionCommandFromResourceAssembler;
-import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.SessionFromEntityAssembler;
-import com.closedsource.psymed.platform.sessionnotes.domain.model.commands.CreateNoteCommand;
+import com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.transform.*;
 import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
-import com.closedsource.psymed.platform.sessionnotes.domain.model.queries.GetNoteByIdQuery;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
 import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteCommandService;
 import com.closedsource.psymed.platform.sessionnotes.domain.service.NoteQueryService;
-import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.NoteController;
 import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.CreateNoteResource;
-import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.CreateNoteCommandFromResourceAssembler;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.CreateTaskResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.NoteResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.resources.TaskResource;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.NoteFromEntityAssembler;
+import com.closedsource.psymed.platform.sessionnotes.interfaces.rest.transform.TaskFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -125,66 +124,105 @@ public class SessionController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
+
+    /**
+     * Retrieves all notes associated with a specific session.
+     *
+     * @return ResponseEntity containing a list of notes if the session is found, or a Bad Request status if the session does not exist.
+     */
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Note set"),
-            @ApiResponse(responseCode = "400", description = "Session not found"),
-            @ApiResponse(responseCode = "404", description = "Note not found")
-    })
-    @PutMapping("/{sessionId}/setNote/{noteId}")
-    public ResponseEntity<SessionResource> setNote(@PathVariable Long sessionId, @PathVariable Long noteId) {
-
-        Optional<Note> note = noteQueryService.handle(new GetNoteByIdQuery(noteId));
-        if (note.isEmpty()) return ResponseEntity.notFound().build();
-
-        Optional<Session> sessionData = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
-
-        if (sessionData.isEmpty()) return ResponseEntity.badRequest().build();
-
-        Optional<Session> sessionResources =  sessionCommandService.handle(new UpdateSessionNoteCommand(sessionId, note.get()));
-
-        return sessionResources
-                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
-                .orElseGet(() -> ResponseEntity.internalServerError().build());
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Note set"),
+            @ApiResponse(responseCode = "200", description = "Notes found"),
             @ApiResponse(responseCode = "400", description = "Session not found")
     })
-    @PutMapping("/{sessionId}/createNote/")
-    public ResponseEntity<SessionResource> createNote(@PathVariable Long sessionId, @RequestBody CreateNoteResource createNoteResource) {
-
-        Optional<Session> sessionData = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
-
-        if (sessionData.isEmpty()) return ResponseEntity.badRequest().build();
-
-        CreateNoteCommand createNoteCommand = CreateNoteCommandFromResourceAssembler.toCommandFromResource(createNoteResource);
-
-        Note note = noteCommandService.handle(createNoteCommand).get();
-
-        var noteResult = sessionCommandService.handle(new UpdateSessionNoteCommand(sessionId, note));
-
-        return noteResult
-                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
-                .orElseGet(() -> ResponseEntity.internalServerError().build());
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Note set"),
-            @ApiResponse(responseCode = "400", description = "Session not found"),
-            @ApiResponse(responseCode = "404", description = "Note not found")
-    })
-    @GetMapping("/{sessionId}/note")
-    public ResponseEntity<SessionResource> getNoteBySessionId(@PathVariable Long sessionId) {
+    @GetMapping("/{sessionId}/notes")
+    public ResponseEntity<List<Note>> getNotesBySessionId(@PathVariable Long sessionId) {
 
         Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
 
         if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
 
-        return sessionResource
-                .map(s -> ResponseEntity.ok(SessionFromEntityAssembler.toResourceFromEntity(s)))
-                .orElseGet(() -> ResponseEntity.internalServerError().build());
+        List<Note> notes = sessionQueryService.handle(new GetAllSessionNotesByIdQuery(sessionId));
+
+        return ResponseEntity.ok(notes);
     }
+
+    /**
+     * Retrieves all tasks associated with a specific session.
+     *
+     * @return ResponseEntity containing a list of tasks if the session is found, or a Bad Request status if the session does not exist.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tasks found"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @GetMapping("/{sessionId}/tasks")
+    public ResponseEntity<List<Task>> getTasksById(@PathVariable Long sessionId) {
+
+        Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
+
+        List<Task> tasks = sessionQueryService.handle(new GetAllSessionTasksByIdQuery(sessionId));
+
+        return ResponseEntity.ok(tasks);
+    }
+
+    /**
+     * Retrieves a specific note by its ID for a given session.
+     *
+     * @param sessionId the ID of the session to which the note belongs.
+     * @param noteId the ID of the note to be retrieved.
+     * @return ResponseEntity containing the NoteResource if the session and note are found,
+     *         or a Bad Request status if the session does not exist, or Not Found if the note does not exist.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note found"),
+            @ApiResponse(responseCode = "400", description = "Session not found"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
+    @GetMapping("/{sessionId}/note/{noteId}")
+    public ResponseEntity<NoteResource> getNoteByNoteIdAndSessionId(@PathVariable Long sessionId, @PathVariable int noteId) {
+
+        Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
+
+        Optional<Note> note = sessionQueryService.handle(new GetSessionNoteByNoteIdAndSessionIdQuery(sessionId, noteId));
+
+        return note
+                .map(n -> ResponseEntity.ok(NoteFromEntityAssembler.toResourceFromEntity(n)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Retrieves a specific task by its ID for a given session.
+     *
+     * @param sessionId the ID of the session to which the task belongs.
+     * @param taskId the ID of the task to be retrieved.
+     * @return ResponseEntity containing the TaskResource if the session and task are found,
+     *         or a Bad Request status if the session does not exist, or Not Found if the task does not exist.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task found"),
+            @ApiResponse(responseCode = "400", description = "Session not found"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    @GetMapping("/{sessionId}/task/{taskId}")
+    public ResponseEntity<TaskResource> getTaskByTaskIdAndSessionId(@PathVariable Long sessionId, @PathVariable int taskId) {
+
+        Optional<Session> sessionResource = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+
+        if (sessionResource.isEmpty()) return ResponseEntity.badRequest().build();
+
+        Optional<Task> task = sessionQueryService.handle(new GetSessionTaskByTaskIdAndSessionIdQuery(sessionId, taskId));
+
+        return task
+                .map(t -> ResponseEntity.ok(TaskFromEntityAssembler.toResourceFromEntity(t)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
     /**
      * Retrieves all sessions for a specific patient by their patient ID.
      *
@@ -209,6 +247,159 @@ public class SessionController {
     }
 
 
+    /**
+     * Creates a new note for a specific session.
+     *
+     * @param sessionId The ID of the session.
+     * @param resource The note details to be created.
+     * @return A ResponseEntity containing the created note resource or a bad request status if the session does not exist.
+     */
+    @Operation(summary = "Create a new note for a session",
+            description = "Creates a new note associated with the given session ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note created successfully"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @PostMapping("/{sessionId}/notes")
+    public ResponseEntity<NoteResource> createNote(@PathVariable Long sessionId, @RequestBody CreateNoteResource resource) {
+        var session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+        if (session.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var createSessionNoteCommand = CreateSessionNoteCommandFromResourceAssembler.toCommandFromResource(sessionId, resource);
+        var note = sessionCommandService.handle(createSessionNoteCommand);
+
+        return note
+                .map(n -> ResponseEntity.ok(NoteFromEntityAssembler.toResourceFromEntity(n)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Deletes a note from a specific session.
+     *
+     * @param sessionId The ID of the session.
+     * @param noteId The ID of the note to be deleted.
+     * @return A ResponseEntity indicating the deletion status or a bad request status if the session does not exist.
+     */
+    @Operation(summary = "Delete a note from a session",
+            description = "Deletes a note associated with the given session ID and note ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @DeleteMapping("/{sessionId}/note/{noteId}")
+    public ResponseEntity<?> deleteNote(@PathVariable Long sessionId, @PathVariable int noteId) {
+        Optional<Session> session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+        if (session.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var deleteSessionNoteCommand = DeleteSessionNoteCommandFromResourceAssembler.toCommandFromResource(sessionId, noteId);
+        sessionCommandService.handle(deleteSessionNoteCommand);
+
+        return ResponseEntity.ok("Deleted note resource from session id");
+    }
+
+    /**
+     * Updates an existing note for a specific session.
+     *
+     * @param sessionId The ID of the session.
+     * @param noteId The ID of the note to be updated.
+     * @param resource The updated note details.
+     * @return A ResponseEntity containing the updated note resource or a bad request status if the session does not exist.
+     */
+    @Operation(summary = "Update a note for a session",
+            description = "Updates an existing note associated with the given session ID and note ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @PutMapping("/{sessionId}/note/{noteId}")
+    public ResponseEntity<NoteResource> updateNote(@PathVariable Long sessionId, @PathVariable int noteId, @RequestBody CreateNoteResource resource) {
+        Optional<Session> session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+        if (session.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var updateSessionNoteCommand = UpdateSessionNoteCommandFromResourceAssembler.toCommandFromResource(sessionId, noteId, resource);
+        var note = sessionCommandService.handle(updateSessionNoteCommand);
+
+        return note
+                .map(n -> ResponseEntity.ok(NoteFromEntityAssembler.toResourceFromEntity(n)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Creates a new task for a specific session.
+     *
+     * @param sessionId The ID of the session.
+     * @param resource The task details to be created.
+     * @return A ResponseEntity containing the created task resource or a bad request status if the session does not exist.
+     */
+    @Operation(summary = "Create a new task for a session",
+            description = "Creates a new task associated with the given session ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task created successfully"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @PostMapping("/{sessionId}/tasks")
+    public ResponseEntity<TaskResource> createTask(@PathVariable Long sessionId, @RequestBody CreateTaskResource resource) {
+        var session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+        if (session.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var createSessionTaskCommand = CreateSessionTaskCommandFromResourceAssembler.toCommandFromResource(sessionId, resource);
+        var task = sessionCommandService.handle(createSessionTaskCommand);
+
+        return task
+                .map(t -> ResponseEntity.ok(TaskFromEntityAssembler.toResourceFromEntity(t)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Deletes a task from a specific session.
+     *
+     * @param sessionId The ID of the session.
+     * @param taskId The ID of the task to be deleted.
+     * @return A ResponseEntity indicating the deletion status or a bad request status if the session does not exist.
+     */
+    @Operation(summary = "Delete a task from a session",
+            description = "Deletes a task associated with the given session ID and task ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @DeleteMapping("/{sessionId}/task/{taskId}")
+    public ResponseEntity<?> deleteTask(@PathVariable Long sessionId, @PathVariable int taskId) {
+        Optional<Session> session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+        if (session.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var deleteSessionTaskCommand = DeleteSessionTaskFromResourceAssembler.toCommandFromResource(sessionId, taskId);
+        sessionCommandService.handle(deleteSessionTaskCommand);
+
+        return ResponseEntity.ok("Deleted task resource from session id");
+    }
+
+    /**
+     * Updates an existing task for a specific session.
+     *
+     * @param sessionId The ID of the session.
+     * @param taskId The ID of the task to be updated.
+     * @param resource The updated task details.
+     * @return A ResponseEntity containing the updated task resource or a bad request status if the session does not exist.
+     */
+    @Operation(summary = "Update a task for a session",
+            description = "Updates an existing task associated with the given session ID and task ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Session not found")
+    })
+    @PutMapping("/{sessionId}/task/{taskId}")
+    public ResponseEntity<TaskResource> updateTask(@PathVariable Long sessionId, @PathVariable int taskId, @RequestBody CreateTaskResource resource) {
+        Optional<Session> session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
+        if (session.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var updateSessionTaskCommand = UpdateSessionTaskCommandFromResourceAssembler.toCommandFromResource(sessionId, taskId, resource);
+        var task = sessionCommandService.handle(updateSessionTaskCommand);
+
+        return task
+                .map(t -> ResponseEntity.ok(TaskFromEntityAssembler.toResourceFromEntity(t)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 
     /**

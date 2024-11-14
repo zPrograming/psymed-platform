@@ -1,5 +1,10 @@
 package com.closedsource.psymed.platform.appointmentandadministration.interfaces.rest.resources;
 
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Note;
+import com.closedsource.psymed.platform.sessionnotes.domain.model.entities.Task;
+
+import java.util.List;
+
 /**
  * A resource class representing the details of a session in the Psymed platform.
  *
@@ -15,5 +20,6 @@ public record SessionResource(
         String professionalId,
         String appointmentDate,
         double sessionTime,
-        String noteId) {
+        List<Note> notes,
+        List<Task> tasks) {
 }

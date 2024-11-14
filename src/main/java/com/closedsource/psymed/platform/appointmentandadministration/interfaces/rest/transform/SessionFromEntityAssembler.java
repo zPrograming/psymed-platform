@@ -21,7 +21,7 @@ public class SessionFromEntityAssembler {
                 entity.getProfessionalId().toString(),
                 entity.getAppointmentDate().toString(),
                 entity.getSessionTime().getDurationInHours(),
-                entity.getNote() != null ? entity.getNote().getId().toString() : null
-        );
+                entity.getNotes(),
+                entity.getTasks());
     }
 }
