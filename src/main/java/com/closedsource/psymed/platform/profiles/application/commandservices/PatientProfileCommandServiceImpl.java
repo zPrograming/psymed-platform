@@ -4,6 +4,7 @@ import com.closedsource.psymed.platform.profiles.application.outboundservices.ac
 import com.closedsource.psymed.platform.profiles.domain.model.aggregates.PatientProfile;
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CheckPatientProfileByIdCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.commands.CreatePatientProfileCommand;
+import com.closedsource.psymed.platform.profiles.domain.model.commands.DeletePatientProfileCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.valueobjects.Email;
 import com.closedsource.psymed.platform.profiles.domain.services.PatientProfileCommandService;
 import com.closedsource.psymed.platform.profiles.infrastructure.persistence.jpa.repositories.PatientProfileRepository;
@@ -47,5 +48,10 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
     @Override
     public boolean handle(CheckPatientProfileByIdCommand command) {
         return this.patientProfileRepository.existsById(command.id());
+    }
+
+    @Override
+    public void handle(DeletePatientProfileCommand command) {
+        patientProfileRepository.deleteById(command.id());
     }
 }

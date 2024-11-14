@@ -1,5 +1,6 @@
 package com.closedsource.psymed.platform.profiles.interfaces.rest;
 
+import com.closedsource.psymed.platform.profiles.domain.model.commands.DeletePatientProfileCommand;
 import com.closedsource.psymed.platform.profiles.domain.model.queries.GetAllPatientProfilesQuery;
 import com.closedsource.psymed.platform.profiles.domain.model.queries.GetPatientProfileByIdQuery;
 import com.closedsource.psymed.platform.profiles.domain.services.PatientProfileCommandService;
@@ -8,6 +9,9 @@ import com.closedsource.psymed.platform.profiles.interfaces.rest.resources.Creat
 import com.closedsource.psymed.platform.profiles.interfaces.rest.resources.ProfileResource;
 import com.closedsource.psymed.platform.profiles.interfaces.rest.transform.CreatePatientProfileCommandFromResourceAssembler;
 import com.closedsource.psymed.platform.profiles.interfaces.rest.transform.ProfileResourceFromEntityAssembler;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 
@@ -58,5 +62,23 @@ public class PatientProfileController {
         var profileResources = profiles.stream().map(ProfileResourceFromEntityAssembler::toResourceFromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(profileResources);
+    }
+
+    @Operation(summary = "Delete a patient profile")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Patient deleted"),
+            @ApiResponse(responseCode = "404", description = "Patient not found")
+    })
+    @DeleteMapping("/{profileId}")
+    public ResponseEntity<String> deleteProfile(@PathVariable Long profileId) {
+
+        var getProfileByIdQuery = new GetPatientProfileByIdQuery(profileId);
+        var profile = patientProfileQueryService.handle(getProfileByIdQuery);
+        if (profile.isEmpty()) return ResponseEntity.notFound().build();
+
+        var deleteProfileCommand = new DeletePatientProfileCommand(profileId);
+        patientProfileCommandService.handle(deleteProfileCommand);
+
+        return ResponseEntity.ok("Patient with ID " + profileId + " successfully deleted");
     }
 }
