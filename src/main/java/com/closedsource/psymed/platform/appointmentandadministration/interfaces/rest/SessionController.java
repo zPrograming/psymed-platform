@@ -260,7 +260,7 @@ public class SessionController {
             @ApiResponse(responseCode = "200", description = "Note created successfully"),
             @ApiResponse(responseCode = "400", description = "Session not found")
     })
-    @PostMapping("/{sessionId}/notes")
+    @PostMapping("/{sessionId}/note")
     public ResponseEntity<NoteResource> createNote(@PathVariable Long sessionId, @RequestBody CreateNoteResource resource) {
         var session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
         if (session.isEmpty()) return ResponseEntity.badRequest().build();
@@ -337,7 +337,7 @@ public class SessionController {
             @ApiResponse(responseCode = "200", description = "Task created successfully"),
             @ApiResponse(responseCode = "400", description = "Session not found")
     })
-    @PostMapping("/{sessionId}/tasks")
+    @PostMapping("/{sessionId}/task")
     public ResponseEntity<TaskResource> createTask(@PathVariable Long sessionId, @RequestBody CreateTaskResource resource) {
         var session = sessionQueryService.handle(new GetSessionByIdQuery(sessionId));
         if (session.isEmpty()) return ResponseEntity.badRequest().build();
