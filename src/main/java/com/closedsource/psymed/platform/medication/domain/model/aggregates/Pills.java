@@ -1,16 +1,15 @@
 package com.closedsource.psymed.platform.medication.domain.model.aggregates;
 
-import com.closedsource.psymed.platform.medication.domain.model.commands.CreateMedicationCommand;
+import com.closedsource.psymed.platform.medication.domain.model.commands.CreatePillsCommand;
 import com.closedsource.psymed.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 
 @Getter
 @Entity
 //@NoArgsConstructor
-public class Medication extends AuditableAbstractAggregateRoot<Medication> {
+public class Pills extends AuditableAbstractAggregateRoot<Pills> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,18 +18,18 @@ public class Medication extends AuditableAbstractAggregateRoot<Medication> {
     private String name;
     private String description;
 
-    public Medication (String name, String description) {
+    public Pills(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
-    public Medication(CreateMedicationCommand command) {
+    public Pills(CreatePillsCommand command) {
         this.name = command.name();
         this.description = command.description();
     }
 
 
-    public Medication() {
+    public Pills() {
 
     }
 }

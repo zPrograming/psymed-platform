@@ -20,7 +20,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
-@RequestMapping(value = "/api/v1/biological-functions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Biological Functions", description = "Biological Functions Endpoints")
 public class BiologicalFunctionController {
     private final BiologicalFunctionCommandService biologicalFunctionCommandService;
@@ -32,7 +32,7 @@ public class BiologicalFunctionController {
         this.biologicalFunctionQueryService = biologicalFunctionQueryService;
     }
 
-    @PostMapping
+    @PostMapping("/biological-functions")
     public ResponseEntity<BiologicalFunctionResource> createBiologicalFunction
             (@RequestBody CreateBiologicalFunctionRecordResource resource) {
         Optional<BiologicalFunction> biologicalFunction = biologicalFunctionCommandService
@@ -42,7 +42,7 @@ public class BiologicalFunctionController {
                         .toResourceFromEntity(biological), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 //IN THE FUTURE THIS HAS TO WORK WITH PATIENT ID AND PROFESSIONAL ID
-    @GetMapping("/{patientId}")
+    @GetMapping("/patients/{patientId}/biological-functions")
     public ResponseEntity<List<BiologicalFunctionResource>> getAllBiologicalFunctionsByPatientId(@PathVariable Long patientId) {
         var patientIdConstructed = new PatientId(patientId);
         var getAllBiologicalFunctionsByPatientIdQuery = new GetAllBiologicalFunctionsByPatientIdQuery(patientIdConstructed);

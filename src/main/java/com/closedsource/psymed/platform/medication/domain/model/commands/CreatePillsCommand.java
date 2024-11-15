@@ -1,8 +1,8 @@
 package com.closedsource.psymed.platform.medication.domain.model.commands;
 
-public record CreateMedicationCommand(String name, String description) {
+public record CreatePillsCommand(String name, String description) {
 
-    public CreateMedicationCommand{
+    public CreatePillsCommand {
         if(name == null || name.isBlank())
             throw new IllegalArgumentException("Medication name cannot be null or empty");
         if(description == null || description.isBlank())
