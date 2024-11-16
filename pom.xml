@@ -86,7 +86,7 @@
             <version>2.6.0</version>
         </dependency>
 
-f        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
