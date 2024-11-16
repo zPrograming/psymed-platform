@@ -32,11 +32,11 @@ public class BiologicalFunctionController {
         this.biologicalFunctionQueryService = biologicalFunctionQueryService;
     }
 
-    @PostMapping("/biological-functions")
+    @PostMapping("/patients/{patientId}/biological-functions")
     public ResponseEntity<BiologicalFunctionResource> createBiologicalFunction
-            (@RequestBody CreateBiologicalFunctionRecordResource resource) {
+            (@PathVariable Long patientId,  @RequestBody CreateBiologicalFunctionRecordResource resource) {
         Optional<BiologicalFunction> biologicalFunction = biologicalFunctionCommandService
-                .handle(CreateBiologicalFunctionRecordCommandFromResourceAssembler.toCommandFromResource(resource));
+                .handle(CreateBiologicalFunctionRecordCommandFromResourceAssembler.toCommandFromResource(resource, patientId));
         return biologicalFunction.map(biological ->
                 new ResponseEntity<>(BiologicalFunctionResourceFromEntityAssembler
                         .toResourceFromEntity(biological), CREATED)).orElseGet(() -> ResponseEntity.badRequest().build());
