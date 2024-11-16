@@ -1,13 +1,15 @@
 package com.closedsource.psymed.platform.patientreport.application.outboundservices.acl;
 
+import com.closedsource.psymed.platform.patientreport.application.outboundservices.ExternalProfileService;
 import com.closedsource.psymed.platform.profiles.interfaces.acl.ProfilesContextFacade;
+import com.closedsource.psymed.platform.profiles.interfaces.acl.service.ProfilesContextFacadeImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ExternalProfileService {
+public class ExternalProfileServiceImpl implements ExternalProfileService {
     private final ProfilesContextFacade profilesContextFacade;
 
-    public ExternalProfileService(ProfilesContextFacade profilesContextFacade) {
+    public ExternalProfileServiceImpl(ProfilesContextFacadeImpl profilesContextFacade) {
         this.profilesContextFacade = profilesContextFacade;
     }
 
