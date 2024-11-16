@@ -1,13 +1,15 @@
 package com.closedsource.psymed.platform.appointmentandadministration.application.internal.outboundservices.acl;
 
+import com.closedsource.psymed.platform.appointmentandadministration.application.internal.outboundservices.AppointmentVersionOfExternalProfileService;
 import com.closedsource.psymed.platform.profiles.interfaces.acl.ProfilesContextFacade;
+import com.closedsource.psymed.platform.profiles.interfaces.acl.service.ProfilesContextFacadeImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AppointmentVersionOfExternalProfileService {
+public class AppointmentVersionOfExternalProfileServiceImpl implements AppointmentVersionOfExternalProfileService {
     private final ProfilesContextFacade profilesContextFacade;
 
-    public AppointmentVersionOfExternalProfileService(ProfilesContextFacade profilesContextFacade) {
+    public AppointmentVersionOfExternalProfileServiceImpl(ProfilesContextFacadeImpl profilesContextFacade) {
         this.profilesContextFacade = profilesContextFacade;
     }
 
